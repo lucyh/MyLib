@@ -1,11 +1,25 @@
 package myLib.value;
 
-import java.util.List;
-
 import myLib.Util;
 
 /**
- * TODO description
+ * A value object representing a book
+ * <ul>
+ * <li>Field(s):</li>
+ * <ul>
+ * <li>{@code author}: a String representing the name of the author (optional)</li>
+ * <li>{@code dd}: a {@link DeweyDecimalValue} value object representing the Dewey Decimal code for the book</li>
+ * <li>{@code publisher}: a String representing the name of the publisher (optional)</li>
+ * <li>{@code pages}: an {@link Integer} representing the number of pages in the book (optional)</li>
+ * <li>{@code series}: a {@link BookSeriesValue} value object representing the book series (optional)</li>
+ * <li>{@code vol}: an {@link Integer} representing the volume number of the book (optional)</li>
+ * </ul>
+ * <li>Method(s):</li>
+ * <ul>
+ * <li>{@link BookValue#getNameDscr()}</li>
+ * </ul>
+ * <li>Database Table Name: <b>{@code LIBBOOK}</b></li>
+ * </ul>
  *
  * @author knerd.knitter
  */
@@ -16,9 +30,25 @@ public class BookValue extends ItemValue
     private String            publisher;
     private Integer           pages;
     private BookSeriesValue   series;
-    private Integer           vol;
-    private LanguageValue     language;
-    private List<String>      tags;
+    private Integer           volume;
+
+    public BookValue( String uniqueKey,
+                      String name,
+                      String author,
+                      DeweyDecimalValue dd,
+                      String publisher,
+                      Integer pages,
+                      BookSeriesValue series,
+                      Integer volume )
+    {
+        super( uniqueKey, name, ItemType.BOOK );
+        this.author = author;
+        this.dd = dd;
+        this.publisher = publisher;
+        this.pages = pages;
+        this.series = series;
+        this.volume = volume;
+    }
 
     public String getAuthor()
     {
@@ -30,11 +60,7 @@ public class BookValue extends ItemValue
         return dd;
     }
 
-    public LanguageValue getLanguage()
-    {
-        return language;
-    }
-
+    /** Returns {@code "Title"} */
     @Override
     public String getNameDscr()
     {
@@ -56,14 +82,9 @@ public class BookValue extends ItemValue
         return series;
     }
 
-    public List<String> getTags()
+    public Integer getVolume()
     {
-        return tags;
-    }
-
-    public Integer getVol()
-    {
-        return vol;
+        return volume;
     }
 
     public void setAuthor( String author )
@@ -74,11 +95,6 @@ public class BookValue extends ItemValue
     public void setDd( DeweyDecimalValue dd )
     {
         this.dd = dd;
-    }
-
-    public void setLanguage( LanguageValue language )
-    {
-        this.language = language;
     }
 
     public void setPages( Integer pages )
@@ -96,28 +112,21 @@ public class BookValue extends ItemValue
         this.series = series;
     }
 
-    public void setTags( List<String> tags )
+    public void setVolume( Integer volume )
     {
-        this.tags = tags;
-    }
-
-    public void setVol( Integer vol )
-    {
-        this.vol = vol;
+        this.volume = volume;
     }
 
     @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer( super.toString() );
-        sb.append( Util.isEmpty( author ) ? "" : String.format( ", Author:[%s]", author ) )
+        sb.append( Util.isBlank( author ) ? "" : String.format( ", Author:[%s]", author ) )
           .append( String.format( ", Dewey Decimal Code:[%s]", dd.toString() ) )
-          .append( Util.isEmpty( publisher ) ? "" : String.format( ", Publisher:[%s]", publisher ) )
+          .append( Util.isBlank( publisher ) ? "" : String.format( ", Publisher:[%s]", publisher ) )
           .append( pages == null ? "" : String.format( ", Pages:[%d]", pages.intValue() ) )
           .append( series == null ? "" : ( String.format( ", Series:[%s]", series.toString() ) ) )
-          .append( vol == null ? "" : String.format( ", Volume #%d", vol.toString() ) )
-          .append( language == null ? "" : ( ", " + language.toString() ) )
-          .append( Util.isEmpty( tags ) ? "" : String.format( ", Tag(s):[%s]", Util.print( tags ) ) );
+          .append( volume == null ? "" : String.format( ", Volume #%d", volume.toString() ) );
         return sb.toString();
     }
 }

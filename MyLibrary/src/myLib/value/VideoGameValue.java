@@ -3,24 +3,50 @@ package myLib.value;
 import myLib.Util;
 
 /**
- * TODO description
+ * A value object representing a video game
+ * <ul>
+ * <li>Field(s):</li>
+ * <ul>
+ * <li>{@code system}: a {@link VideoGameSeriesValue} value object representing the system on which the video game was released</li>
+ * <li>{@code series}: a {@link VideoGameSeriesValue} value object representing the series of the video game (optional)</li>
+ * <li>{@code players}: an <b>{@code int}</b> representing the number of players that can play the video game (defaults to <b>{@code 1}</b>)</li>
+ * <li>{@code hasCoop}: a {@link Boolean} indicating if the video game has cooperative mode (optional)</li>
+ * <li>{@code originalSystem}: a {@link VideoGameSeriesValue} value object representing the <b><i>original</i></b> system on which the video game was released
+ * (optional)</li>
+ * <li>{@code compilation}: a {@link VideoGameValue} value object representing the compilation video game on which the video game is found (optional)</li>
+ * <li>{@code strategyGuide}: a {@link BookValue} value object representing the strategy guide (optional)</li>
+ * <li>{@code copies}: an <b>{@code int}</b> representing the number of copies of the video game that are held (defaults to <b>{@code 1}</b>)</li>
+ * <li>{@code cartridge}: a boolean indicating if the video game has a disc or cartridge (as opposed to being a digital copy)</li>
+ * <li>{@code downloadLocation}: a String representing the location where the video game is downloaded (optional)</li>
+ * <li>{@code numberDiscs}: an {@link Integer} representing the number of discs the video game comprises (optional)</li>
+ * </ul>
+ * <li>Database Table Name: <b>{@code LIBVG}</b></li>
+ * </ul>
  * 
  * @author knerd.knitter
  */
 public class VideoGameValue extends ItemValue
 {
     /**
-     * TODO description
+     * An enum representing the format of the video game
      * <ul>
-     * <li>An enum</li>
+     * <li>Value(s):</li>
+     * <ul>
+     * <li>{@link Format#CART}: {@code "Cartridge/Disc"}</li>
+     * <li>{@link Format#DNLD}: {@code "Download"}</li>
+     * </ul>
+     * <li>Field(s):</li>
+     * <ul>
+     * <li>{@code text}: a String representing the text of the format</li>
+     * </ul>
      * </ul>
      * 
      * @author knerd.knitter
      */
     public enum Format
     {
-     DNLD( "Download" ),
-     CART( "Cartridge/Disc" );
+     CART( "Cartridge/Disc" ),
+     DNLD( "Download" );
 
         private String text;
 
@@ -35,17 +61,43 @@ public class VideoGameValue extends ItemValue
         }
     }
 
-    private SystemValue          system;
+    private VideoGameSystemValue system;
     private VideoGameSeriesValue series;
-    private int                  players       = 1;
+    private int                  players = 1;
     private Boolean              hasCoop;
-    private SystemValue          originalSystem;
+    private VideoGameSystemValue originalSystem;
     private VideoGameValue       compilation;
-    private boolean              strategyGuide = false;
-    private int                  copies;
+    private BookValue            strategyGuide;
+    private int                  copies  = 1;
     private boolean              cartridge;
     private String               downloadLocation;
     private Integer              numberDiscs;
+
+    public VideoGameValue( String uniqueKey,
+                           String name,
+                           VideoGameSystemValue system,
+                           VideoGameSeriesValue series,
+                           int players,
+                           Boolean hasCoop,
+                           VideoGameSystemValue originalSystem,
+                           BookValue strategyGuide,
+                           int copies,
+                           boolean cartridge,
+                           String downloadLocation,
+                           Integer numberDiscs )
+    {
+        super( uniqueKey, name, ItemType.VG );
+        this.system = system;
+        this.series = series;
+        this.players = players;
+        this.hasCoop = hasCoop;
+        this.originalSystem = originalSystem;
+        this.strategyGuide = strategyGuide;
+        this.copies = copies;
+        this.cartridge = cartridge;
+        this.downloadLocation = downloadLocation;
+        this.numberDiscs = numberDiscs;
+    }
 
     public VideoGameValue getCompilation()
     {
@@ -72,7 +124,7 @@ public class VideoGameValue extends ItemValue
         return numberDiscs;
     }
 
-    public SystemValue getOriginalSystem()
+    public VideoGameSystemValue getOriginalSystem()
     {
         return originalSystem;
     }
@@ -87,7 +139,12 @@ public class VideoGameValue extends ItemValue
         return series;
     }
 
-    public SystemValue getSystem()
+    public BookValue getStrategyGuide()
+    {
+        return strategyGuide;
+    }
+
+    public VideoGameSystemValue getSystem()
     {
         return system;
     }
@@ -95,11 +152,6 @@ public class VideoGameValue extends ItemValue
     public boolean isCartridge()
     {
         return cartridge;
-    }
-
-    public boolean isStrategyGuide()
-    {
-        return strategyGuide;
     }
 
     public void setCartridge( boolean cartridge )
@@ -132,7 +184,7 @@ public class VideoGameValue extends ItemValue
         this.numberDiscs = numberDiscs;
     }
 
-    public void setOriginalSystem( SystemValue originalSystem )
+    public void setOriginalSystem( VideoGameSystemValue originalSystem )
     {
         this.originalSystem = originalSystem;
     }
@@ -147,12 +199,12 @@ public class VideoGameValue extends ItemValue
         this.series = series;
     }
 
-    public void setStrategyGuide( boolean strategyGuide )
+    public void setStrategyGuide( BookValue strategyGuide )
     {
         this.strategyGuide = strategyGuide;
     }
 
-    public void setSystem( SystemValue system )
+    public void setSystem( VideoGameSystemValue system )
     {
         this.system = system;
     }
@@ -168,10 +220,11 @@ public class VideoGameValue extends ItemValue
                                                          hasCoop.booleanValue() ? "has" : "does not have" ) );
         sb.append( originalSystem == null ? "" : String.format( ", Original System:[%s]", originalSystem.toString() ) );
         sb.append( compilation == null ? "" : String.format( ", In Compilation:[%s]", compilation.toString() ) );
-        sb.append( strategyGuide ? ", Have strategy guide" : "" );
-        sb.append( copies > 1 ? String.format( ", Have %d copies", copies ) : "" );
+        sb.append( strategyGuide == null ? "" : String.format( ", Strategy Guide:[%s]",
+                                                               strategyGuide.getDd().toString() ) );
+        sb.append( copies == 1 ? "" : String.format( ", Have %d copies", copies ) );
         sb.append( String.format( ", %d cartridge", cartridge ? "have" : "no" ) );
-        sb.append( Util.isEmpty( downloadLocation ) ? "" : String.format( ", Download Location:[%s]",
+        sb.append( Util.isBlank( downloadLocation ) ? "" : String.format( ", Download Location:[%s]",
                                                                           downloadLocation ) );
         sb.append( numberDiscs == null ? "" : String.format( ", Number of Discs:[%d]", numberDiscs.intValue() ) );
         return sb.toString();

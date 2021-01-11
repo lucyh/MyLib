@@ -14,6 +14,18 @@ import java.util.Map.Entry;
 public class Util
 {
     /**
+     * Check if the given String is <b>{@code null}</b> or equal to an empty String ({@code ""})
+     *
+     * @param str
+     *            the String to check
+     * @return a boolean indicating if the String is empty
+     */
+    public static boolean isBlank( String str )
+    {
+        return str == null || str.equals( "" );
+    }
+
+    /**
      * Check if a given {@link Collection} is <b>{@code null}</b> or has no items
      *
      * @param list
@@ -35,18 +47,6 @@ public class Util
     public static boolean isEmpty( HashMap<?, ?> map )
     {
         return map == null || map.size() == 0;
-    }
-
-    /**
-     * Check if the given String is <b>{@code null}</b> or equal to an empty String ({@code ""})
-     *
-     * @param str
-     *            the String to check
-     * @return a boolean indicating if the String is empty
-     */
-    public static boolean isEmpty( String str )
-    {
-        return str == null || str.equals( "" );
     }
 
     /**
@@ -185,8 +185,8 @@ public class Util
     /**
      * Return a boolean indicating if the given Strings are the same:
      * <ul>
-     * <li>If the result of calling {@link #isEmpty(String)} with {@code string1} is <b>{@code true}</b>, then return the result of calling
-     * {@link #isEmpty(String)} with {@code string2}</li>
+     * <li>If the result of calling {@link #isBlank(String)} with {@code string1} is <b>{@code true}</b>, then return the result of calling
+     * {@link #isBlank(String)} with {@code string2}</li>
      * <li>Otherwise, return the result of calling {@link String#equals(Object)} on {@code string1} with {@code string2}</li>
      * </ul>
      *
@@ -198,6 +198,6 @@ public class Util
      */
     public static boolean stringsMatch( String string1, String string2 )
     {
-        return isEmpty( string1 ) ? isEmpty( string2 ) : string1.equals( string2 );
+        return isBlank( string1 ) ? isBlank( string2 ) : string1.equals( string2 );
     }
 }
