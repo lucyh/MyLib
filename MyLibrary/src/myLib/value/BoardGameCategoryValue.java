@@ -1,9 +1,22 @@
 package myLib.value;
 
+/**
+ * A value object representing a category for the {@link BoardGameValue} value object
+ * <ul>
+ * <li>Field(s):</li>
+ * <ul>
+ * <li>{@code uniqueKey}: a String representing the unique key of the object</li>
+ * <li>{@code categoryName}: a String representing the name of the category</li>
+ * </ul>
+ * <li>Database Table Name: <b>{@code LIBBGCATG}</b></li>
+ * </ul>
+ * 
+ * @author knerd.knitter
+ */
 public class BoardGameCategoryValue
 {
     /**
-     * TODO remove eventually - these should be configured in the database
+     * FIXME remove eventually - these should be configured in the database
      *
      * @author knerd.knitter
      */
@@ -48,11 +61,32 @@ public class BoardGameCategoryValue
         }
     }
 
-    private Category category;
+    private String uniqueKey;
+    private String categoryName;
+
+    public BoardGameCategoryValue( Category category )
+    {
+        this.categoryName = category.text();
+    }
+
+    public BoardGameCategoryValue( String categoryName )
+    {
+        this.categoryName = categoryName;
+    }
+
+    public String getUniqueKey()
+    {
+        return uniqueKey;
+    }
+
+    public void setUniqueKey( String uniqueKey )
+    {
+        this.uniqueKey = uniqueKey;
+    }
 
     @Override
     public String toString()
     {
-        return category.text();
+        return String.format( "Key: [%s], Name:[%s]", uniqueKey, categoryName );
     }
 }
